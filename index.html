@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Clasificador de patologías en la piel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Online image analyzer of the three most likely diagnoses for a skin lesion." />
+    
+    <!-- Código para evitar que el navegador almacene en caché la página -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link href="css/inicio.css" rel="stylesheet" type="text/css" />
+    <link href="css/slider.css" rel="stylesheet" type="text/css" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    
+    <!-- Hojas de estilo CSS -->
+    <link rel="stylesheet" href="css/w3.css">
+    <link rel="stylesheet" href="css/bee.css">
+    
+    <!-- Link a los iconos de Font Awesome -->
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.4.2/css/all.css' integrity='sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns' crossorigin='anonymous'>
+    
+    <!-- Enlace a fuentes de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="logoinub2.jpg">
+    
+    <style>
+        html, body, h2, h3, h4 {font-family: 'Palatino', sans-serif}
+
+        /* Nueva clase para triplicar la altura del botón */
+        .triple-height {
+            height: 150px; /* Ajusta este valor según sea necesario */
+        }
+
+        /* Estilos para el área de arrastrar y soltar */
+        #drop-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        #drop-area.hover {
+            border-color: #333;
+        }
+
+        #upload-button {
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Cambiar el fondo de algunos elementos con clases w3-white */
+        .w3-white, .w3-white > * {
+            background-color: transparent !important;
+        }
+
+        /* Ajustar colores en elementos con fondo claro */
+        .w3-light-grey {
+            background-color: #555555 !important; /* Gris oscuro claro */
+        }
+
+        /* Ajustar los colores de texto y mantenerlos en blanco */
+        body, body * {
+            color: #FFFFFF !important;
+        }
+
+        /* Clase para ocultar elementos */
+        .hide {
+            display: none;
+        }
+    </style>
+    
+</head>
+
+<body class="front not-logged-in page-node no-sidebars i18n-en front not-logged-in cuerpo_con_promo cuerpo_con_menu page-node-1" style="background-color: #333333;">
+    <div id="sticky_footer-body">
+
+        <!-- Franja horizontal verde oliva con línea naranja (Barra Superior) -->
+        <div style="background-color: olive; height: 100px; width: 100%; border-bottom: 10px solid orange;"></div>
+
+        <!-- w3-content define un contenedor para contenido centrado de tamaño fijo,
+        y se envuelve alrededor de todo el contenido de la página. -->
+        <div class="w3-content card" style="max-width:960px">
+
+            <!-- 1. HOME PAGE TAB -->
+            <div class="tabbed w3-animate-opacity" id="home" style="background-color:transparent;">
+
+                <!-- Header -->
+
+                <div class="w3-center title adjust-fontcolor logo">
+                    <div class="w3-center">
+                        <!-- Imagen eliminada -->
+                    </div>
+
+                    <h1 class="space-letters w3-text-indigo" style="font-size: 55px;"><b>Clasificador de patologías en la piel</b></h1>
+
+                    <h3 class="space-letters w3-text-white" style="font-family: Arial, sans-serif;">Servicio de diagnóstico en línea que identifica las tres principales posibilidades para una lesión en la piel a partir de imágenes</h3>
+                    
+                </div>
+
+                <!-- Imagen de portada -->
+                <!-- Esta imagen será reemplazada una vez que se ejecute el código js. -->
+                <div class="w3-center">
+                    <div align="center">
+                        <img id="selected-image" class="w3-round adjust-image" src="assets/samplepic.jpg" alt="">
+                    </div>
+                </div> 
+
+                <!-- Frase debajo de la imagen -->
+                <div class="w3-center" style="margin-top: 10px;">
+                    <p>Vista previa de la lesion a diagnosticar</p>
+                </div>
+
+                <div class="w3-center">
+                    <div class="progress-bar">Modelo con Inteligencia Artificial cargando...</div>
+                </div>
+
+
+                <div class="w3-center add-padding w3-border add-margin side-margin w3-round w3-light-grey">
+
+                    <h5 class='new-font'>Resultados</h5>
+                    <ol class='w3-left-align' id='prediction-list'></ol>
+
+                </div>
+
+                <!-- Área de arrastrar y soltar -->
+                <div id="drop-area" class="w3-center bottom-padding triple-height" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" style="background-color: #444444;">
+
+                    <button id="upload-button" class="w3-btn w3-green w3-round w3-margin-bottom adjust-spacing w3-hover-orange btn-font w3-padding w3-space-letters w3-card-4 triple-height" onclick="setTimeout(simulateClick.bind(null, 'image-selector'), 200)">
+                        <i class='fas fa-camera w3-padding-right' style='font-size:15px;'></i><b>Haga clic o arrastre y suelte una imagen de una lesión en la piel</b>
+                    </button>
+                </div> 
+
+            </div><!-- Final del Home Page -->
+
+            <div class='w3-padding'>
+                <h5 class="space-letters tag-font w3-text-indigo"><b>Características técnicas del Modelo:</b></h5>
+                <h5 class="space-letters tag-font w3-text-indigo"><b>- Exactitud: 0.90 </b></h5>
+                <h5 class="space-letters tag-font w3-text-indigo"><b>- Precisión: 0.91 </b></h5>
+                <h5 class="space-letters tag-font w3-text-indigo"><b>- Sensibilidad: 0.90 </b></h5>
+                <h6 class="space-letters tag-font w3-text-indigo"><b>El entrenamiento del modelo está basado en el conjunto de 10015 imágenes dermatoscópicas de Harvard, entrenado con Tensorflow</b></h6>
+            </div>
+
+            <!-- Simulamos clics en estos dos botones de carga inicial. -->
+            <div class="hide">
+                <button id='predict-button'>Predict</button>
+            </div>
+
+            <div class="hide">
+                <input id="image-selector" type="file" accept="image/*">
+            </div>
+            <!--===================================-->
+
+            <!-- Barra de Integrantes al final de la página -->
+            <div class="w3-padding w3-center" style="margin-top: 20px;">
+                <h3 style="font-family: Arial, sans-serif;">Integrantes del equipo:</h3>
+                <ul style="font-family: Arial, sans-serif; list-style: none; padding: 0;">
+                    <li>Karen Quintana Romero</li>
+                    <li>Sebastian Martinez Vidal</li>
+                    <li>Julian Maya Gonzalez</li>
+                </ul>
+            </div>
+
+            <!-- Cargando jQuery -->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <!-- Cargando TensorFlow.js -->
+            <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.3/dist/tf.min.js"></script>
+
+            <!-- Script para predicción -->
+            <script src="jscript/target_classes.js"></script>
+            <script src="jscript/predict100.js"></script> 
+
+            <!-- Añadimos las funciones de drag and drop -->
+            <script>
+            function simulateClick(id) {
+                var evt = new MouseEvent('click', {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window
+                });
+                var ele = document.getElementById(id);
+                ele.dispatchEvent(evt);
+            }
+
+            function handleDragOver(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.dataTransfer.dropEffect = 'copy';
+                document.getElementById('drop-area').classList.add('hover');
+            }
+
+            function handleDragLeave(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                document.getElementById('drop-area').classList.remove('hover');
+            }
+
+            function handleDrop(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                document.getElementById('drop-area').classList.remove('hover');
+                var files = event.dataTransfer.files;
+                if (files.length > 0) {
+                    var file = files[0];
+                    $("#image-selector").prop("files", files);
+                    loadImage(file);
+                }
+            }
+
+            function loadImage(file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#selected-image').attr('src', e.target.result);
+                    // Llama a la función de predicción aquí
+                    $('#predict-button').click();
+                }
+                reader.readAsDataURL(file);
+            }
+
+            // También manejamos el cambio del input file
+            $("#image-selector").change(function() {
+                var file = $("#image-selector").prop('files')[0];
+                loadImage(file);
+            });
+            </script>
+
+        </div> <!-- w3-content -->
+
+        <!-- Barra horizontal verde oliva con línea naranja (Barra Inferior) -->
+        <div style="background-color: olive; height: 100px; width: 100%; border-top: 10px solid orange;"></div>
+
+    </div> <!-- sticky_footer-body -->
+</body>
+</html>
